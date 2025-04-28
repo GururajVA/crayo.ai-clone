@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Add any global custom styles here if needed */
+body {
+  @apply bg-gray-950 text-white;
+}
+
+/* NProgress bar customization */
+#nprogress .bar {
+  background: #a855f7 !important; /* purple color */
+  height: 3px;
+}

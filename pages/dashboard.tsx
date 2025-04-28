@@ -30,7 +30,7 @@ export default function Dashboard() {
           </div>
         </div>
       ) : (
-        // ✅ Actual dashboard content below
+        // Actual dashboard content below
         <>
           <SignedIn>
             <div className="min-h-screen bg-gray-950 text-white flex relative">
@@ -71,7 +71,27 @@ export default function Dashboard() {
                       <Settings className="w-5 h-5" />
                       <span>Settings</span>
                     </Link>
-                    {/* other links... */}
+                    <Link href="/script-generator" className="hover:text-purple-400" onClick={() => setSidebarOpen(false)}>
+                  ✏️ Script Generator
+                </Link>
+                <Link href="/caption-generator" className="hover:text-purple-400" onClick={() => setSidebarOpen(false)}>
+                  🎬 Auto Captions
+                </Link>
+                <Link href="/voiceover-generator" className="hover:text-purple-400" onClick={() => setSidebarOpen(false)}>
+                  🎤 AI Voiceovers
+                </Link>
+                <Link href="/fake-chat-generator" className="hover:text-purple-400" onClick={() => setSidebarOpen(false)}>
+                  💬 Fake Chats
+                </Link>
+                <Link href="/image-generator" className="hover:text-purple-400" onClick={() => setSidebarOpen(false)}>
+                  🖼️ AI Images
+                </Link>
+                <Link href="/split-screen-editor" className="hover:text-purple-400" onClick={() => setSidebarOpen(false)}>
+                  🎮 Split Screen
+                </Link>
+                <Link href="/reddit-story-generator" className="hover:text-purple-400" onClick={() => setSidebarOpen(false)}>
+                  📖 Reddit Videos
+                </Link>
                   </nav>
                 </div>
 
@@ -87,6 +107,45 @@ export default function Dashboard() {
                 <h1 className="text-3xl font-bold mb-6">
                   👋 Hi {user?.firstName || "there"}, welcome back!
                 </h1>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {/* Tool cards */}
+              <Link href="/script-generator">
+                <div className="p-6 bg-gray-800 rounded-2xl hover:bg-gray-700 transition cursor-pointer">
+                  ✏️ Script Generator
+                </div>
+              </Link>
+              <Link href="/caption-generator">
+                <div className="p-6 bg-gray-800 rounded-2xl hover:bg-gray-700 transition cursor-pointer">
+                  🎬 Auto Captions
+                </div>
+              </Link>
+              <Link href="/voiceover-generator">
+                <div className="p-6 bg-gray-800 rounded-2xl hover:bg-gray-700 transition cursor-pointer">
+                  🎤 AI Voiceovers
+                </div>
+              </Link>
+              <Link href="/fake-chat-generator">
+                <div className="p-6 bg-gray-800 rounded-2xl hover:bg-gray-700 transition cursor-pointer">
+                  💬 Fake Chat Generator
+                </div>
+              </Link>
+              <Link href="/image-generator">
+                <div className="p-6 bg-gray-800 rounded-2xl hover:bg-gray-700 transition cursor-pointer">
+                  🖼️ AI Image Generator
+                </div>
+              </Link>
+              <Link href="/split-screen-editor">
+                <div className="p-6 bg-gray-800 rounded-2xl hover:bg-gray-700 transition cursor-pointer">
+                  🎮 Split Screen Editor
+                </div>
+              </Link>
+              <Link href="/reddit-story-generator">
+                <div className="p-6 bg-gray-800 rounded-2xl hover:bg-gray-700 transition cursor-pointer">
+                  📖 Reddit Story Videos
+                </div>
+              </Link>
+            </div>
+          
 
                 {/* Weekly Usage card */}
                 <div className="mb-8 p-6 rounded-2xl bg-gray-800 flex items-center justify-between">
@@ -109,13 +168,14 @@ export default function Dashboard() {
                 </div>
               </main>
             </div>
-          </SignedIn>
+          
 
           <SignedOut>
             <RedirectToSignIn />
           </SignedOut>
-        </>
-      )}
+       
+      </>)
     </div>
   );
+}
 }

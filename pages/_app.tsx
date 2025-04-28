@@ -1,11 +1,13 @@
 import { ClerkProvider } from "@clerk/nextjs";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import NProgress from '@/lib/nprogress';
 import type { AppProps } from "next/app";
 import "../styles/globals.css";
 import { Inter } from "next/font/google"; // 👈 add this
 import React from "react";
+import NProgress from '@/lib/nprogress';
+import '@/styles/globals.css';
+
 
 const inter = Inter({ subsets: ["latin"] }); // 👈 load font
 
