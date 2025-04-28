@@ -1,7 +1,7 @@
 import { ClerkProvider } from "@clerk/nextjs";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import NProgress from "@/lib/nprogress";
+import NProgress from '@/lib/nprogress';
 import type { AppProps } from "next/app";
 import "../styles/globals.css";
 import { Inter } from "next/font/google"; // 👈 add this
@@ -35,3 +35,4 @@ export default function MyApp({ Component, pageProps }: AppProps) {
     </ClerkProvider>
   );
 }
+ 

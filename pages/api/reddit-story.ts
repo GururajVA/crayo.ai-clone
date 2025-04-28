@@ -12,7 +12,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (!redditUrl) {
     return res.status(400).json({ message: "Reddit URL is required" });
   }
-
+  
   try {
     // Here you would fetch Reddit API — for now we fake it
     const fakeStoryText = "Today I messed up by trusting my cat with my expensive cheese...";

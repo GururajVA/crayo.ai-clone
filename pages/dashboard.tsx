@@ -15,7 +15,7 @@ export default function Dashboard() {
     const timer = setTimeout(() => setLoading(false), 1000);
     return () => clearTimeout(timer);
   }, []);
-
+ 
   return (
     <div className="p-8">
       {loading ? (

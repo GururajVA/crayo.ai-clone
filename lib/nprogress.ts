@@ -1,7 +1,12 @@
-// /lib/nprogress.ts
-import NProgress from "nprogress";
-import "nprogress/nprogress.css";
+// lib/nprogress.ts
+import NProgress from 'nprogress';
+import 'nprogress/nprogress.css';
 
-NProgress.configure({ showSpinner: false, speed: 400, minimum: 0.25 });
+NProgress.configure({
+  minimum: 0.2,
+  easing: 'ease',
+  speed: 500,
+  showSpinner: false,
+});
 
 export default NProgress;

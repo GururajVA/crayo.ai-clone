@@ -8,7 +8,7 @@ import { Configuration, OpenAIApi } from "openai";
 export const config = {
   api: {
     bodyParser: false,
-  },
+  }, 
 };
 
 const configuration = new Configuration({

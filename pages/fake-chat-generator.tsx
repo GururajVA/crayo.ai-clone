@@ -14,7 +14,7 @@ export default function FakeChatGenerator() {
     setMessages((prev) => [...prev, { name, text }]);
     setText("");
   };
-
+ 
   const downloadChatAsImage = async () => {
     const chatElement = document.getElementById("chat-area");
     if (!chatElement) return;

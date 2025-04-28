@@ -14,7 +14,7 @@ export default function CaptionGenerator() {
 
     const formData = new FormData();
     formData.append("file", file);
-
+ 
     try {
       setLoading(true);
       const res = await axios.post("/api/caption-generator", formData, {

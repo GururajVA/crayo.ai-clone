@@ -19,7 +19,7 @@ export default function SplitScreenEditor() {
       setGameplayVideo(e.target.files[0]);
     }
   };
-
+ 
   return (
     <div className="min-h-screen p-8 bg-gray-900 text-white">
       <h1 className="text-3xl font-bold mb-6">Split-Screen Editor</h1>

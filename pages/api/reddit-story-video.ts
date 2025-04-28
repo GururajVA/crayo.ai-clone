@@ -11,7 +11,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (!storyText) {
     return res.status(400).json({ message: "Story text is required" });
-  }
+  } 
 
   try {
     // Normally: TTS + background + captions + merge into video

@@ -21,7 +21,7 @@ export default function ScriptGenerator() {
       setLoading(false);
     }
   };
-
+ 
   return (
     <div className="min-h-screen p-8 bg-gray-900 text-white">
       <h1 className="text-3xl font-bold mb-4">AI Script Generator</h1>
