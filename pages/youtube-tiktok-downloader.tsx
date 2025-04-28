@@ -1,97 +1,160 @@
-import { useState } from "react";
-import { SignedIn, SignedOut, RedirectToSignIn } from "@clerk/nextjs";
-import Link from "next/link";
+import { useState } from 'react';
+import Link from 'next/link';
 
-export default function YouTubeTikTokDownloader() {
-  const [url, setUrl] = useState("");
-  const [downloadLink, setDownloadLink] = useState<string | null>(null);
+interface VideoData {
+  title: string;
+  thumbnail: string;
+  formats: {
+    qualityLabel: string;
+    url: string;
+    container: string;
+    mimeType?: string;
+  }[];
+}
+
+export default function Downloader() {
+  const [url, setUrl] = useState('');
+  const [platform, setPlatform] = useState('youtube');
+  const [data, setData] = useState<VideoData | null>(null);
   const [loading, setLoading] = useState(false);
-  const [thumbnail, setThumbnail] = useState<string | null>(null);
-  const [videoTitle, setVideoTitle] = useState<string | null>(null);
+  const [error, setError] = useState('');
 
-  const handleDownload = async () => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     if (!url) return;
+
     setLoading(true);
-    setDownloadLink(null);
-    if (!res.ok) throw new Error(data.message);
-
-    setThumbnail(data.thumbnailUrl);
-    setVideoTitle(data.title);
-    setDownloadLink(data.downloadUrl);
-
-    // ✅ Auto download
-    const a = document.createElement("a");
-    a.href = data.downloadUrl;
-    a.download = data.title || "tiktok-video.mp4"; 
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
+    setError('');
+    
     try {
-      // 🛑 FAKE API CALL (replace with your real backend if needed)
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      setDownloadLink(url); // In real app, you'd get processed link here
-    } catch (error) {
-      console.error("Download failed", error);
+      const params = new URLSearchParams({
+        url,
+        platform
+      });
+
+      const response = await fetch(`/api/download?${params}`);
+      if (!response.ok) throw new Error('Failed to fetch video info');
+      
+      const result = await response.json();
+      if (result.error) throw new Error(result.error);
+
+      setData(result);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to download video');
     } finally {
       setLoading(false);
     }
   };
+  // Add to your existing youtube-tiktok-downloader.tsx
+  const handleTikTokDownload = async (downloadUrl: string) => {
+    try {
+      const response = await fetch(downloadUrl);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `tiktok-${Date.now()}.mp4`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error) {
+      setError('Failed to download video file');
+    }
+  };
 
+// Update your download button for TikTok
+{platform === 'tiktok' && data?.formats.map((format, index) => (
+  <button
+    key={index}
+    onClick={() => handleTikTokDownload(format.url)}
+    className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+  >
+    Download {format.quality}
+  </button>
+))}
   return (
-    <>
-      <SignedIn>
-        <div className="min-h-screen bg-gray-950 text-white p-8">
-          {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-4xl font-bold mb-2">📥 YouTube / TikTok Downloader</h1>
-            <p className="text-gray-400">Paste a link and download videos easily!</p>
-          </div>
+    <div className="min-h-screen bg-gray-100 py-8 px-4">
+      <div className="max-w-3xl mx-auto">
+        <Link href="/" className="text-blue-600 hover:underline mb-8 inline-block">
+          ← Back to Home
+        </Link>
 
-          {/* Input Form */}
-          <div className="flex flex-col md:flex-row gap-4 mb-8">
+        <h1 className="text-3xl font-bold mb-6">Video Downloader</h1>
+
+        <form onSubmit={handleSubmit} className="mb-8 bg-white p-6 rounded-lg shadow-md">
+          <div className="flex flex-col space-y-4">
+            <select
+              value={platform}
+              onChange={(e) => setPlatform(e.target.value)}
+              className="p-2 border rounded"
+            >
+              <option value="youtube">YouTube</option>
+              <option value="tiktok" disabled>TikTok (Coming Soon)</option>
+            </select>
+
             <input
-              type="text"
+              type="url"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
-              placeholder="Paste YouTube or TikTok URL..."
-              className="p-4 rounded-lg bg-gray-800 flex-1 outline-none focus:ring-2 ring-purple-400"
+              placeholder={`Enter ${platform} video URL`}
+              className="p-2 border rounded"
+              required
             />
+
             <button
-              onClick={handleDownload}
-              disabled={loading || !url}
-              className="bg-purple-600 hover:bg-purple-700 transition px-6 py-3 rounded-lg font-bold disabled:opacity-50"
+              type="submit"
+              disabled={loading}
+              className="bg-blue-600 text-white p-2 rounded hover:bg-blue-700 disabled:bg-gray-400"
             >
-              {loading ? "Downloading..." : "Download"}
+              {loading ? 'Analyzing...' : 'Download'}
             </button>
           </div>
+        </form>
 
-          {/* Download Link */}
-          {downloadLink && (
-            <div className="mt-6 p-4 bg-gray-800 rounded-lg">
-              <p className="mb-2">🎉 Download ready:</p>
-              <a
-                href={downloadLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-purple-400 underline hover:text-purple-300"
-              >
-                Click here to download your video
-              </a>
-            </div>
-          )}
-
-          {/* Back to Dashboard */}
-          <div className="mt-8">
-            <Link href="/dashboard" className="text-gray-400 hover:text-purple-400 underline">
-              ← Back to Dashboard
-            </Link>
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            {error}
           </div>
-        </div>
-      </SignedIn>
+        )}
 
-      <SignedOut>
-        <RedirectToSignIn />
-      </SignedOut>
-    </>
+        {data && (
+          <div className="bg-white p-6 rounded-lg shadow-md">
+            <div className="mb-6">
+              <h2 className="text-xl font-semibold mb-4">{data.title}</h2>
+              <img
+                src={data.thumbnail}
+                alt="Video thumbnail"
+                className="w-full max-w-md rounded-lg mb-4"
+              />
+            </div>
+
+            <div className="space-y-4">
+              <h3 className="text-lg font-medium">Available Formats:</h3>
+              {data.formats.map((format, index) => (
+                <div
+                  key={index}
+                  className="flex items-center justify-between p-4 border rounded hover:bg-gray-50"
+                >
+                  <div>
+                    <span className="font-medium">{format.qualityLabel}</span>
+                    <span className="text-sm text-gray-600 ml-2">
+                      ({format.container})
+                    </span>
+                  </div>
+                  <a
+                    href={format.url}
+                    download
+                    className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+                  >
+                    Download
+                  </a>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
   );
 }

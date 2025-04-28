@@ -1,42 +1,54 @@
-import type { NextApiRequest, NextApiResponse } from "next";
-import ytdl from "ytdl-core"; // 🛑 You need to install this: npm install ytdl-core
+import { NextApiRequest, NextApiResponse } from 'next';
+import ytdl from 'ytdl-core';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ message: "Method Not Allowed" });
-  }
+interface VideoFormat {
+  qualityLabel: string;
+  url: string;
+  container: string;
+  mimeType?: string;
+}
 
-  const { url } = req.body;
+interface VideoInfo {
+  title: string;
+  thumbnail: string;
+  formats: VideoFormat[];
+}
 
-  if (!url) {
-    return res.status(400).json({ message: "Missing URL" });
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse<VideoInfo | { error: string }>
+) {
+  const { url, platform } = req.query;
+
+  if (!url || typeof url !== 'string') {
+    return res.status(400).json({ error: 'Missing video URL' });
   }
 
   try {
-    // Validate URL
-    if (!ytdl.validateURL(url)) {
-      return res.status(400).json({ message: "Invalid YouTube URL" });
+    if (platform === 'youtube') {
+      const info = await ytdl.getInfo(url);
+      const videoDetails = info.videoDetails;
+      
+      const formats = ytdl.filterFormats(info.formats, 'videoandaudio')
+        .map(format => ({
+          qualityLabel: format.qualityLabel || 'unknown',
+          url: format.url,
+          container: format.container,
+          mimeType: format.mimeType
+        }));
+
+      return res.status(200).json({
+        title: videoDetails.title,
+        thumbnail: videoDetails.thumbnails[0].url,
+        formats
+      });
     }
 
-    // Get video info
-    const info = await ytdl.getInfo(url);
-    const format = ytdl.chooseFormat(info.formats, { quality: "highestvideo" });
+    // Add TikTok handling here (would require different library)
+    return res.status(400).json({ error: 'Platform not supported yet' });
 
-    return res.status(200).json({
-      downloadUrl: format.url,
-      title: info.videoDetails.title,
-    });
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: "Something went wrong." });
-    
-    {thumbnail && (
-      <div className="mt-6 text-center">
-        <img src={thumbnail} alt="Video thumbnail" className="rounded-lg mx-auto mb-4" />
-        <h2 className="text-lg font-semibold">{videoTitle}</h2>
-        <p className="text-purple-400 mt-2">✅ Ready to download!</p>
-      </div>
-    )}
-    
+    console.error('Download error:', error);
+    return res.status(500).json({ error: 'Failed to fetch video info' });
   }
 }

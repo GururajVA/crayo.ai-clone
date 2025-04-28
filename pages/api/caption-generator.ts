@@ -3,7 +3,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import formidable from "formidable";
 import fs from "fs";
-import { Configuration, OpenAIApi } from "openai";
+import { Configuration, OpenAI } from "openai";
 
 export const config = {
   api: {
@@ -15,7 +15,7 @@ const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-const openai = new OpenAIApi(configuration);
+const openai = new OpenAI(configuration);
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {
