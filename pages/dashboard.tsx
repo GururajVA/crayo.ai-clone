@@ -2,9 +2,8 @@ import { UserButton, useUser } from "@clerk/nextjs";
 import { SignedIn, SignedOut, RedirectToSignIn } from "@clerk/nextjs";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Menu } from "lucide-react"; // 🍔 hamburger icon
+import { Menu, Home, Settings, User, LogOut } from "lucide-react";
 import React from "react";
-import { Home, Settings, User, LogOut } from "lucide-react";
 
 export default function Dashboard() {
   const { user } = useUser();
@@ -15,7 +14,7 @@ export default function Dashboard() {
     const timer = setTimeout(() => setLoading(false), 1000);
     return () => clearTimeout(timer);
   }, []);
- 
+
   return (
     <div className="p-8">
       {loading ? (
@@ -107,9 +106,10 @@ export default function Dashboard() {
                 <h1 className="text-3xl font-bold mb-6">
                   👋 Hi {user?.firstName || "there"}, welcome back!
                 </h1>
+                
+                {/* Tools grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {/* Tool cards */}
-              <Link href="/script-generator">
+                <Link href="/script-generator">
                 <div className="p-6 bg-gray-800 rounded-2xl hover:bg-gray-700 transition cursor-pointer">
                   ✏️ Script Generator
                 </div>
@@ -143,9 +143,8 @@ export default function Dashboard() {
                 <div className="p-6 bg-gray-800 rounded-2xl hover:bg-gray-700 transition cursor-pointer">
                   📖 Reddit Story Videos
                 </div>
-              </Link>
-            </div>
-          
+                </Link>
+                </div>
 
                 {/* Weekly Usage card */}
                 <div className="mb-8 p-6 rounded-2xl bg-gray-800 flex items-center justify-between">
@@ -156,26 +155,15 @@ export default function Dashboard() {
                     </p>
                   </div>
                 </div>
-
-                {/* Tools grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  <Link href="/script-generator">
-                    <div className="p-6 bg-gray-800 rounded-2xl hover:bg-gray-700 transition-transform transform hover:scale-105 cursor-pointer">
-                      ✏️ Script Generator
-                    </div>
-                  </Link>
-                  {/* other tool cards... */}
-                </div>
               </main>
             </div>
-          
+          </SignedIn>
 
           <SignedOut>
             <RedirectToSignIn />
           </SignedOut>
-       
-      </>)
+        </>
+      )}
     </div>
   );
-}
 }

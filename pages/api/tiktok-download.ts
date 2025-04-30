@@ -1,6 +1,21 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import axios from 'axios';
 
+interface TikWmApiResponse {
+  data?: {
+    play?: string;
+    wmplay?: string;
+    cover?: string;
+    title?: string;
+    author?: {
+      unique_id?: string;
+    };
+    duration?: number;
+  };
+  code?: number;
+  msg?: string;
+}
+
 interface TikTokResponse {
   url: string;
   author: string;
@@ -27,24 +42,29 @@ export default async function handler(
   try {
     const apiUrl = `https://www.tikwm.com/api/?url=${encodeURIComponent(url)}`;
     
-    const response = await axios.get(apiUrl, {
+    const response = await axios.get<TikWmApiResponse>(apiUrl, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
       }
     });
 
-    const data = response.data.data;
-
-    if (!data) {
-      return res.status(500).json({ error: 'Failed to fetch TikTok data' });
+    if (!response.data?.data) {
+      const errorMessage = response.data?.msg || 'No video data found';
+      return res.status(500).json({ error: errorMessage });
     }
 
-    const result = {
+    const data = response.data.data;
+
+    if (!data.play || !data.wmplay) {
+      return res.status(500).json({ error: 'Missing video URLs in response' });
+    }
+
+    const result: TikTokResponse = {
       url: data.play,
       author: data.author?.unique_id || 'Unknown',
       title: data.title || 'TikTok Video',
-      duration: data.duration,
-      thumbnail: data.cover,
+      duration: data.duration || 0,
+      thumbnail: data.cover || '',
       formats: [
         {
           quality: 'HD',
@@ -62,6 +82,18 @@ export default async function handler(
     res.status(200).json(result);
   } catch (error) {
     console.error('TikTok download error:', error);
-    res.status(500).json({ error: 'Failed to download TikTok video' });
+    let errorMessage = 'Failed to download TikTok video';
+    
+    // Type-safe error handling
+    if (typeof error === 'object' && error !== null) {
+      if ('response' in error) {
+        const axiosError = error as { response?: { data?: { msg?: string } } };
+        errorMessage = axiosError.response?.data?.msg || errorMessage;
+      } else if ('message' in error) {
+        errorMessage = (error as { message: string }).message;
+      }
+    }
+
+    res.status(500).json({ error: errorMessage });
   }
 }

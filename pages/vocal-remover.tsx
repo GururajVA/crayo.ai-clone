@@ -1,14 +1,18 @@
-// /pages/vocal-remover.tsx
-
 import { useState } from "react";
 import axios from "axios";
 import React from "react";
+
+interface VocalRemovalResponse {
+  vocalUrl: string;
+  instrumentalUrl: string;
+}
 
 export default function VocalRemover() {
   const [audioFile, setAudioFile] = useState<File | null>(null);
   const [processing, setProcessing] = useState(false);
   const [vocalUrl, setVocalUrl] = useState("");
   const [instrumentalUrl, setInstrumentalUrl] = useState("");
+  const [error, setError] = useState("");
 
   const handleAudioUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.[0]) {
@@ -24,11 +28,15 @@ export default function VocalRemover() {
 
     try {
       setProcessing(true);
-      const res = await axios.post("/api/vocal-remover", formData);
+      setError("");
+      const res = await axios.post<VocalRemovalResponse>("/api/vocal-remover", formData);
       setVocalUrl(res.data.vocalUrl);
       setInstrumentalUrl(res.data.instrumentalUrl);
     } catch (error) {
       console.error("Error splitting audio:", error);
+      setError("Failed to process audio. Please try again.");
+      setVocalUrl("");
+      setInstrumentalUrl("");
     } finally {
       setProcessing(false);
     }
@@ -52,6 +60,8 @@ export default function VocalRemover() {
       >
         {processing ? "Processing..." : "Split Audio"}
       </button>
+
+      {error && <div className="mt-4 text-red-500">{error}</div>}
 
       <div className="mt-8 space-y-6">
         {vocalUrl && (

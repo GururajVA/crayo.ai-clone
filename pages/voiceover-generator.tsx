@@ -1,21 +1,26 @@
-// /pages/voiceover-generator.tsx
-
 import { useState } from "react";
 import axios from "axios";
 import React from "react";
+
+interface VoiceoverResponse {
+  audioUrl: string;
+}
 
 export default function VoiceoverGenerator() {
   const [text, setText] = useState("");
   const [audioUrl, setAudioUrl] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const generateVoiceover = async () => {
     try {
       setLoading(true);
-      const res = await axios.post("/api/voiceover-generator", { text });
+      setError("");
+      const res = await axios.post<VoiceoverResponse>("/api/voiceover-generator", { text });
       setAudioUrl(res.data.audioUrl);
     } catch (error) {
       console.error("Error generating voiceover:", error);
+      setError("Failed to generate voiceover. Please try again.");
       setAudioUrl("");
     } finally {
       setLoading(false);
@@ -39,6 +44,12 @@ export default function VoiceoverGenerator() {
       >
         {loading ? "Generating..." : "Generate Voiceover"}
       </button>
+
+      {error && (
+        <div className="mt-4 text-red-500">
+          {error}
+        </div>
+      )}
 
       {audioUrl && (
         <div className="mt-8">

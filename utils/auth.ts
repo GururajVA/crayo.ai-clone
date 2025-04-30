@@ -1,12 +1,24 @@
-// Fix Clerk integration
-import { auth, currentUser } from '@clerk/nextjs/server';
+// utils/auth.ts
+import { useClerk } from "@clerk/nextjs";
 
-export const getCurrentUser = async () => {
-  const user = await currentUser();
-  return user;
-};
+export const useAuthActions = () => {
+  const { signOut, redirectToSignIn } = useClerk();
 
-export const checkAuth = () => {
-  const { userId } = auth();
-  return !!userId;
+  const login = async () => {
+    try {
+      await redirectToSignIn();
+    } catch (error) {
+      console.error("Login failed", error);
+    }
+  };
+
+  const logout = async () => {
+    try {
+      await signOut();
+    } catch (error) {
+      console.error("Logout failed", error);
+    }
+  };
+
+  return { login, logout };
 };

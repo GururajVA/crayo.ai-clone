@@ -1,8 +1,10 @@
-// /pages/caption-generator.tsx
-
 import { useState } from "react";
 import axios from "axios";
 import React from "react";
+
+interface CaptionResponse {
+  text: string;
+}
 
 export default function CaptionGenerator() {
   const [file, setFile] = useState<File | null>(null);
@@ -14,21 +16,30 @@ export default function CaptionGenerator() {
 
     const formData = new FormData();
     formData.append("file", file);
- 
+
     try {
       setLoading(true);
-      const res = await axios.post("/api/caption-generator", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      const res = await axios.post<CaptionResponse>(
+        "/api/caption-generator",
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
       setCaptions(res.data.text);
     } catch (error) {
       console.error("Error generating captions:", error);
-      setCaptions("Failed to generate captions. Please try again.");
+      setCaptions(
+        error instanceof Error 
+          ? error.message 
+          : "Failed to generate captions. Please try again."
+      );
     } finally {
       setLoading(false);
     }
   };
 
+  // The rest of the component remains the same
   return (
     <div className="min-h-screen p-8 bg-gray-900 text-white">
       <h1 className="text-3xl font-bold mb-4">Auto Caption Generator</h1>

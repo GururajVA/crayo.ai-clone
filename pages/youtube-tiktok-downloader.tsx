@@ -5,7 +5,7 @@ interface VideoData {
   title: string;
   thumbnail: string;
   formats: {
-    qualityLabel: string;
+    qualityLabel: string; // This is the correct property name
     url: string;
     container: string;
     mimeType?: string;
@@ -65,13 +65,14 @@ export default function Downloader() {
 
 // Update your download button for TikTok
 {platform === 'tiktok' && data?.formats.map((format, index) => (
-  <button
-    key={index}
-    onClick={() => handleTikTokDownload(format.url)}
-    className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-  >
-    Download {format.quality}
-  </button>
+  // Change this line in both places
+<button
+  key={index}
+  onClick={() => handleTikTokDownload(format.url)}
+  className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+>
+  Download {format.qualityLabel} {/* Changed from format.quality */}
+</button>
 ))}
   return (
     <div className="min-h-screen bg-gray-100 py-8 px-4">

@@ -1,22 +1,33 @@
-// /pages/reddit-story.tsx
-
 import { useState } from "react";
 import axios from "axios";
 import React from "react";
+
+interface RedditStoryResponse {
+  storyText: string;
+}
+
+interface VideoResponse {
+  videoUrl: string;
+}
 
 export default function RedditStory() {
   const [redditUrl, setRedditUrl] = useState("");
   const [storyText, setStoryText] = useState("");
   const [loading, setLoading] = useState(false);
   const [videoUrl, setVideoUrl] = useState("");
+  const [error, setError] = useState("");
 
   const fetchStory = async () => {
     try {
       setLoading(true);
-      const res = await axios.post("/api/reddit-story", { redditUrl });
+      setError("");
+      const res = await axios.post<RedditStoryResponse>("/api/reddit-story", { redditUrl });
       setStoryText(res.data.storyText);
+      setVideoUrl(""); // Clear previous video
     } catch (error) {
       console.error("Error fetching story:", error);
+      setError(error instanceof Error ? error.message : "Failed to fetch story");
+      setStoryText("");
     } finally {
       setLoading(false);
     }
@@ -25,10 +36,13 @@ export default function RedditStory() {
   const generateVideo = async () => {
     try {
       setLoading(true);
-      const res = await axios.post("/api/reddit-story-video", { storyText });
+      setError("");
+      const res = await axios.post<VideoResponse>("/api/reddit-story-video", { storyText });
       setVideoUrl(res.data.videoUrl);
     } catch (error) {
       console.error("Error generating video:", error);
+      setError(error instanceof Error ? error.message : "Failed to generate video");
+      setVideoUrl("");
     } finally {
       setLoading(false);
     }
@@ -54,6 +68,8 @@ export default function RedditStory() {
         {loading ? "Fetching Story..." : "Fetch Story"}
       </button>
 
+      {error && <div className="text-red-500 mb-4">{error}</div>}
+
       {storyText && (
         <div className="mb-8">
           <h2 className="text-2xl font-semibold mb-4">Fetched Story:</h2>
@@ -76,10 +92,13 @@ export default function RedditStory() {
       {videoUrl && (
         <div className="mt-8">
           <h2 className="text-2xl font-semibold mb-4">Generated Video:</h2>
-          <video src={videoUrl} controls className="rounded-lg mx-auto w-full max-w-2xl" />
+          <video 
+            src={videoUrl} 
+            controls 
+            className="rounded-lg mx-auto w-full max-w-2xl" 
+          />
         </div>
       )}
     </div>
   );
 }
- 

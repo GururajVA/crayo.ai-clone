@@ -1,6 +1,14 @@
 import { useState } from 'react';
 import axios from 'axios';
 
+interface ImageResponse {
+  url: string;
+}
+
+interface ScriptResponse {
+  content: string;
+}
+
 const AIGenerator = () => {
   const [prompt, setPrompt] = useState('');
   const [imageUrl, setImageUrl] = useState('');
@@ -11,13 +19,16 @@ const AIGenerator = () => {
   const generateImage = async () => {
     try {
       setLoading(true);
-      const response = await axios.post('/api/image-generator', {
+      const response = await axios.post<ImageResponse>('/api/image-generator', {
         prompt,
         size: '1024x1024'
       });
       setImageUrl(response.data.url);
-    } catch (err) {
-      setError(err.response?.data?.error || 'Failed to generate image');
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.error 
+        || error.message 
+        || 'Failed to generate image';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -26,15 +37,18 @@ const AIGenerator = () => {
   const generateScript = async () => {
     try {
       setLoading(true);
-      const response = await axios.post('/api/script-generator', {
+      const response = await axios.post<ScriptResponse>('/api/script-generator', {
         messages: [{
           role: 'user',
           content: `Write a script about: ${prompt}`
         }]
       });
       setScript(response.data.content);
-    } catch (err) {
-      setError(err.response?.data?.error || 'Failed to generate script');
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.error 
+        || error.message 
+        || 'Failed to generate script';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
