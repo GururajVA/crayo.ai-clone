@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@clerk/nextjs": "^6.18.0",
+    "@clerk/nextjs": "^6.18.1",
     "@lottiefiles/react-lottie-player": "^3.6.0",
     "@types/nprogress": "^0.2.3",
     "@types/react": "^19.1.2",
@@ -11,7 +11,7 @@
     "html2canvas": "^1.4.1",
     "lucide-react": "^0.503.0",
     "nprogress": "^0.2.0",
-    "openai": "^4.96.0",
+    "openai": "^4.96.2",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "ytdl-core": "^4.11.5"
@@ -19,6 +19,9 @@
   "devDependencies": {
     "@types/axios": "^0.9.36",
     "@types/formidable": "^3.4.5",
-    "@types/node": "^22.15.2"
+    "@types/node": "^22.15.3",
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^4.1.4"
   }
 }
