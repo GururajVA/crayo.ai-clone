@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import React from "react";
+import Image from 'next/image';
 
 interface ImageResponse {
   url: string;

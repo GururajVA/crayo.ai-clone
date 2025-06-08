@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import OpenAI from 'openai';
+import Image from 'next/image';
 
 interface GenerationRequest {
   prompt: string;
