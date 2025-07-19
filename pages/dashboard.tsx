@@ -2,8 +2,53 @@ import { UserButton, useUser } from "@clerk/nextjs";
 import { SignedIn, SignedOut, RedirectToSignIn } from "@clerk/nextjs";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Menu, Home, Settings, User, LogOut } from "lucide-react";
+import { Menu, Home, Settings, User } from "lucide-react";
 import React from "react";
+
+const tools = [
+  {
+    href: "/script-generator",
+    icon: "✏️",
+    label: "Script Generator",
+    desc: "Generate creative scripts with AI."
+  },
+  {
+    href: "/caption-generator",
+    icon: "🎬",
+    label: "Auto Captions",
+    desc: "Create captions for your videos."
+  },
+  {
+    href: "/voiceover-generator",
+    icon: "🎤",
+    label: "AI Voiceovers",
+    desc: "Generate realistic voiceovers."
+  },
+  {
+    href: "/fake-chat-generator",
+    icon: "💬",
+    label: "Fake Chat Generator",
+    desc: "Create fake chat conversations."
+  },
+  {
+    href: "/image-generator",
+    icon: "🖼️",
+    label: "AI Image Generator",
+    desc: "Generate images from text."
+  },
+  {
+    href: "/split-screen-editor",
+    icon: "🎮",
+    label: "Split Screen Editor",
+    desc: "Edit videos in split screen."
+  },
+  {
+    href: "/reddit-story",
+    icon: "📖",
+    label: "Reddit Story Videos",
+    desc: "Turn Reddit stories into videos."
+  },
+];
 
 export default function Dashboard() {
   const { user } = useUser();
@@ -16,154 +61,90 @@ export default function Dashboard() {
   }, []);
 
   return (
-    <div className="p-8">
-      {loading ? (
-        // ⏳ Loading Skeleton
-        <div className="p-8 animate-pulse space-y-4">
-          <div className="h-8 bg-gray-800 rounded" />
-          <div className="h-6 bg-gray-800 rounded w-1/2" />
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[...Array(6)].map((_, i) => (
-              <div key={i} className="h-40 bg-gray-800 rounded-2xl" />
-            ))}
-          </div>
-        </div>
-      ) : (
-        // Actual dashboard content below
-        <>
-          <SignedIn>
-            <div className="min-h-screen bg-gray-950 text-white flex relative">
-              {/* Mobile Hamburger Button */}
-              <button
-                className="absolute top-4 left-4 md:hidden z-50"
-                onClick={() => setSidebarOpen(!sidebarOpen)}
-              >
-                <Menu size={32} />
-              </button>
-
-              {/* Sidebar */}
-              <aside
-                className={`bg-gray-900 p-6 flex flex-col justify-between 
-                transition-all duration-500 ease-in-out
-                md:translate-x-0 md:relative md:w-64 w-64
-                ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} 
-                fixed top-0 left-0 h-full z-40`}
-              >
-                {/* MOBILE BACKDROP */}
-                {sidebarOpen && (
-                  <div
-                    onClick={() => setSidebarOpen(false)}
-                    className="fixed inset-0 bg-black/40 backdrop-blur-sm z-30 md:hidden"
-                  />
-                )}
-
-                <div>
-                  <h1 className="text-2xl font-bold mb-8">Dashboard</h1>
-
-                  <nav className="flex flex-col space-y-4">
-                    {/* Sidebar links */}
-                    <Link href="/dashboard" className="flex items-center gap-2 p-2 rounded-lg hover:text-purple-400 hover:drop-shadow-lg transition">
-                      <Home className="w-5 h-5" />
-                      <span>Dashboard</span>
-                    </Link>
-                    <Link href="/settings" className="flex items-center gap-2 p-2 rounded-lg hover:text-purple-400 hover:drop-shadow-lg transition">
-                      <Settings className="w-5 h-5" />
-                      <span>Settings</span>
-                    </Link>
-                    <Link href="/script-generator" className="hover:text-purple-400" onClick={() => setSidebarOpen(false)}>
-                  ✏️ Script Generator
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-950 to-gray-900 flex">
+      <SignedIn>
+        {/* Sidebar */}
+        <aside className={`fixed top-0 left-0 h-full w-64 bg-gray-900 shadow-lg z-40 transform transition-transform duration-300 ease-in-out ${sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}>
+          <div className="flex flex-col h-full justify-between p-6">
+            <div>
+              <div className="flex items-center gap-3 mb-10">
+                <span className="text-2xl font-extrabold text-purple-500 tracking-tight">Crayo.ai</span>
+              </div>
+              <nav className="flex flex-col gap-2">
+                <Link href="/dashboard" className="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-200 hover:bg-purple-700/20 transition font-medium">
+                  <Home className="w-5 h-5" /> Dashboard
                 </Link>
-                <Link href="/caption-generator" className="hover:text-purple-400" onClick={() => setSidebarOpen(false)}>
-                  🎬 Auto Captions
+                <Link href="/settings" className="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-200 hover:bg-purple-700/20 transition font-medium">
+                  <Settings className="w-5 h-5" /> Settings
                 </Link>
-                <Link href="/voiceover-generator" className="hover:text-purple-400" onClick={() => setSidebarOpen(false)}>
-                  🎤 AI Voiceovers
-                </Link>
-                <Link href="/fake-chat-generator" className="hover:text-purple-400" onClick={() => setSidebarOpen(false)}>
-                  💬 Fake Chats
-                </Link>
-                <Link href="/image-generator" className="hover:text-purple-400" onClick={() => setSidebarOpen(false)}>
-                  🖼️ AI Images
-                </Link>
-                <Link href="/split-screen-editor" className="hover:text-purple-400" onClick={() => setSidebarOpen(false)}>
-                  🎮 Split Screen
-                </Link>
-                <Link href="/reddit-story-generator" className="hover:text-purple-400" onClick={() => setSidebarOpen(false)}>
-                  📖 Reddit Videos
-                </Link>
-                  </nav>
-                </div>
-
-                {/* Logout section */}
-                <div className="flex items-center space-x-3">
-                  <UserButton afterSignOutUrl="/" />
-                  <span className="text-sm">{user?.firstName}</span>
-                </div>
-              </aside>
-
-              {/* Main content */}
-              <main className="flex-1 p-8 overflow-y-auto ml-0 md:ml-64">
-                <h1 className="text-3xl font-bold mb-6">
-                  👋 Hi {user?.firstName || "there"}, welcome back!
-                </h1>
-                
-                {/* Tools grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <Link href="/script-generator">
-                <div className="p-6 bg-gray-800 rounded-2xl hover:bg-gray-700 transition cursor-pointer">
-                  ✏️ Script Generator
-                </div>
-              </Link>
-              <Link href="/caption-generator">
-                <div className="p-6 bg-gray-800 rounded-2xl hover:bg-gray-700 transition cursor-pointer">
-                  🎬 Auto Captions
-                </div>
-              </Link>
-              <Link href="/voiceover-generator">
-                <div className="p-6 bg-gray-800 rounded-2xl hover:bg-gray-700 transition cursor-pointer">
-                  🎤 AI Voiceovers
-                </div>
-              </Link>
-              <Link href="/fake-chat-generator">
-                <div className="p-6 bg-gray-800 rounded-2xl hover:bg-gray-700 transition cursor-pointer">
-                  💬 Fake Chat Generator
-                </div>
-              </Link>
-              <Link href="/image-generator">
-                <div className="p-6 bg-gray-800 rounded-2xl hover:bg-gray-700 transition cursor-pointer">
-                  🖼️ AI Image Generator
-                </div>
-              </Link>
-              <Link href="/split-screen-editor">
-                <div className="p-6 bg-gray-800 rounded-2xl hover:bg-gray-700 transition cursor-pointer">
-                  🎮 Split Screen Editor
-                </div>
-              </Link>
-              <Link href="/reddit-story-generator">
-                <div className="p-6 bg-gray-800 rounded-2xl hover:bg-gray-700 transition cursor-pointer">
-                  📖 Reddit Story Videos
-                </div>
-                </Link>
-                </div>
-
-                {/* Weekly Usage card */}
-                <div className="mb-8 p-6 rounded-2xl bg-gray-800 flex items-center justify-between">
-                  <div>
-                    <h2 className="text-2xl font-bold mb-2">📊 Weekly Usage</h2>
-                    <p className="text-gray-400">
-                      You used <span className="text-purple-400 font-bold">7 tools</span> this week!
-                    </p>
-                  </div>
-                </div>
-              </main>
+                <div className="border-t border-gray-700 my-4" />
+                {tools.map((tool) => (
+                  <Link key={tool.href} href={tool.href} className="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:bg-purple-700/20 hover:text-purple-400 transition font-medium">
+                    <span className="text-lg">{tool.icon}</span> {tool.label}
+                  </Link>
+                ))}
+              </nav>
             </div>
-          </SignedIn>
+            <div className="flex items-center gap-3 mt-8">
+              <UserButton afterSignOutUrl="/" />
+              <span className="text-sm text-gray-300">{user?.firstName}</span>
+            </div>
+          </div>
+        </aside>
 
-          <SignedOut>
-            <RedirectToSignIn />
-          </SignedOut>
-        </>
-      )}
+        {/* Main content */}
+        <div className="flex-1 flex flex-col min-h-screen ml-0 md:ml-64 transition-all duration-300">
+          {/* Topbar */}
+          <header className="flex items-center justify-between px-8 py-6 bg-gray-950/80 shadow-sm sticky top-0 z-30">
+            <button className="md:hidden text-gray-200" onClick={() => setSidebarOpen(!sidebarOpen)}>
+              <Menu size={32} />
+            </button>
+            <div className="flex items-center gap-4">
+              <span className="text-lg font-semibold text-white">Dashboard</span>
+            </div>
+            <div className="hidden md:flex items-center gap-3">
+              <User className="w-6 h-6 text-purple-400" />
+              <span className="text-gray-300 font-medium">{user?.firstName}</span>
+            </div>
+          </header>
+
+          {/* Welcome */}
+          <main className="flex-1 p-8">
+            <h1 className="text-4xl font-extrabold mb-2 text-white animate-fade-in">👋 Hi {user?.firstName || "there"}, welcome back!</h1>
+            <p className="text-lg text-gray-400 mb-8 animate-fade-in delay-100">What would you like to create today?</p>
+
+            {/* Tools grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+              {tools.map((tool, i) => (
+                <Link key={tool.href} href={tool.href} className="group block rounded-2xl bg-gray-800/80 shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 p-6 border border-gray-800 hover:border-purple-500">
+                  <div className="flex items-center gap-4 mb-2">
+                    <span className="text-3xl group-hover:scale-110 transition-transform duration-200">{tool.icon}</span>
+                    <span className="text-xl font-bold text-white group-hover:text-purple-400 transition-colors duration-200">{tool.label}</span>
+                  </div>
+                  <p className="text-gray-400 text-sm group-hover:text-gray-200 transition-colors duration-200">{tool.desc}</p>
+                </Link>
+              ))}
+            </div>
+
+            {/* Weekly Usage card */}
+            <div className="mb-8 p-6 rounded-2xl bg-gradient-to-r from-purple-800/80 to-purple-600/80 flex items-center justify-between shadow-lg animate-fade-in delay-200">
+              <div>
+                <h2 className="text-2xl font-bold mb-2 text-white">📊 Weekly Usage</h2>
+                <p className="text-gray-200">
+                  You used <span className="text-purple-200 font-bold">{tools.length} tools</span> this week!
+                </p>
+              </div>
+            </div>
+          </main>
+        </div>
+      </SignedIn>
+      <SignedOut>
+        <RedirectToSignIn />
+      </SignedOut>
     </div>
   );
 }
+
+// Animations (add to your global.css or tailwind config)
+// .animate-fade-in { animation: fadeIn 0.7s ease both; }
+// @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }

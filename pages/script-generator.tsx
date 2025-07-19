@@ -3,7 +3,7 @@ import axios from "axios";
 import React from "react";
 
 interface ScriptResponse {
-  script: string;
+  content: string;
 }
 
 export default function ScriptGenerator() {
@@ -13,11 +13,27 @@ export default function ScriptGenerator() {
   const [error, setError] = useState("");
 
   const generateScript = async () => {
+    if (!prompt.trim()) {
+      setError("Please enter a prompt");
+      return;
+    }
+
     try {
       setLoading(true);
       setError("");
-      const res = await axios.post<ScriptResponse>("/api/script-generator", { prompt });
-      setResult(res.data.script);
+      const res = await axios.post<ScriptResponse>("/api/script-generator", {
+        messages: [
+          {
+            role: "system",
+            content: "You are a professional script writer. Generate creative and engaging scripts based on the user's prompt."
+          },
+          {
+            role: "user",
+            content: prompt
+          }
+        ]
+      });
+      setResult(res.data.content);
     } catch (error) {
       console.error("Error generating script:", error);
       setError("Failed to generate script. Please try again.");

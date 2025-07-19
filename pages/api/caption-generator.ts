@@ -19,6 +19,7 @@ interface TranscriptionResponse {
   error?: string;
 }
 
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<TranscriptionResponse>
@@ -42,17 +43,22 @@ export default async function handler(
       return res.status(400).json({ text: "", error: "No file uploaded" });
     }
 
-    const fileData = fs.readFileSync(file.filepath);
-    const audioFile = new File([fileData], file.originalFilename || "audio.mp4", {
-      type: file.mimetype || 'audio/mp4',
-    });
-
+    // Create a ReadStream instead of using Buffer
+    const fileStream = fs.createReadStream(file.filepath);
+    const MAX_FILE_SIZE = 25 * 1024 * 1024; // 25MB
+    if (file.size > MAX_FILE_SIZE) {
+      return res.status(400).json({ text: "", error: "File too large" });
+    }
     const transcription = await openai.audio.transcriptions.create({
-      file: audioFile,
+      file: fileStream, // Use the stream directly
       model: "whisper-1",
       response_format: "text",
+      filename: file.originalFilename || "audio.mp4", // Important for OpenAI
     });
-
+    const ALLOWED_MIME_TYPES = ['audio/mpeg', 'audio/mp4', 'audio/wav'];
+    if (!file.mimetype || !ALLOWED_MIME_TYPES.includes(file.mimetype)) {
+      return res.status(400).json({ text: "", error: "Invalid file type" });
+    }
     res.status(200).json({ text: transcription });
   } catch (error) {
     console.error("Error transcribing file:", error);

@@ -1,0 +1,16 @@
+/* styles/nprogress.css */
+#nprogress {
+    pointer-events: none;
+  }
+  
+  #nprogress .bar {
+    background: #a855f7;
+    position: fixed;
+    z-index: 1031;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+  }
+  
+  /* ... other nprogress styles you need */
